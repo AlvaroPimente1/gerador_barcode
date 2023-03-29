@@ -1,25 +1,28 @@
-from PIL import Image
+import PIL
 import os
 from barcode import Code128
 from barcode.writer import ImageWriter
 import tkinter
 from tkinter import filedialog
+from reportlab.lib.units import mm
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import landscape
+##from reportlab.lib.pagesizes import Size
+
 
 def criar_codigo():
     arquivo_selecionado = filedialog.askopenfilename()
     print(arquivo_selecionado)
+    pdf_path = os.path.splitext(arquivo_selecionado)[0] + '.pdf'
+    pdf = canvas.Canvas(pdf_path)
     with open(arquivo_selecionado, 'r') as arquivo:
         for codigo in arquivo:
             print(codigo[:-1])
             codigo_barra = Code128(codigo, writer=ImageWriter())
             nome_arquivo = codigo[:-1]
-            codigo_barra.save(nome_arquivo)
-            #img = Image.open(f'{nome_arquivo}')
-            #width = img.width // 10
-            #height = img.height // 10
-            #img_resized = img.resize((width, height))
-            #img_resized.save(nome_arquivo)
+            codigo_barra.save(nome_arquivo, options={'width': 300, 'height': 200})
         arquivo.close()
+    pdf.save()
 
 
 
